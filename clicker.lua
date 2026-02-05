@@ -11,10 +11,8 @@ LastCpsSentAt = 0
 LastCpsChangedAt = 0
 CpsDebounceSeconds = 0.75
 ClickerEnabled = false
-StateDir = "C:\\Users\\danick\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\RoamingState\\OnixClient\\Scripts\\AutoComplete\\clicker"
-StateFile = StateDir .. "\\state.json"
-FallbackStateDir = "clicker"
-FallbackStateFile = FallbackStateDir .. "/state.json"
+StateDir = "clicker"
+StateFile = StateDir .. "/state.json"
 ShowOverlay = true
 
 positionX = 10
@@ -99,19 +97,11 @@ local function writeState()
         return true
     end
 
-    ensureStateDir(FallbackStateDir)
-
     if writeWithFs(StateFile) then
-        return
-    elseif writeWithFs(FallbackStateFile) then
         return
     elseif writeWithIo(StateFile) then
         return
-    elseif writeWithIo(FallbackStateFile) then
-        return
     elseif writeWithHandle(StateFile) then
-        return
-    elseif writeWithHandle(FallbackStateFile) then
         return
     end
 end
