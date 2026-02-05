@@ -1,7 +1,7 @@
 package core
 
 type InputPort interface {
-	IsKeyDown(vk int) bool
+	IsMouseDown() bool
 	ForegroundTitle() string
 	SendLeftDown() error
 	SendLeftUp() error

@@ -6,13 +6,8 @@ import (
 	"time"
 )
 
-const (
-	VK_LBUTTON = 0x01
-	VK_F9      = 0x78
-)
-
 func Run(ctx context.Context, clicker *Clicker, input InputPort) error {
-	wasDown := false
+	wasInjected := false
 
 	for {
 		select {
@@ -21,22 +16,18 @@ func Run(ctx context.Context, clicker *Clicker, input InputPort) error {
 		default:
 		}
 
-		if input.IsKeyDown(VK_F9) {
-			return nil
-		}
-
 		if !clicker.Enabled() {
-			if wasDown {
+			if wasInjected {
 				_ = input.SendLeftUp()
-				wasDown = false
+				wasInjected = false
 			}
-			time.Sleep(20 * time.Millisecond)
+			<-time.After(20 * time.Millisecond)
 			continue
 		}
 
 		cps := clicker.CPS()
 		if cps <= 0 {
-			time.Sleep(50 * time.Millisecond)
+			<-time.After(50 * time.Millisecond)
 			continue
 		}
 
@@ -47,16 +38,16 @@ func Run(ctx context.Context, clicker *Clicker, input InputPort) error {
 		case <-time.After(interval):
 		}
 
-		down := input.IsKeyDown(VK_LBUTTON)
+		down := input.IsMouseDown()
 		title := strings.ToLower(input.ForegroundTitle())
 		if down && strings.Contains(title, "minecraft") {
 			_ = input.SendLeftUp()
 			<-time.After(time.Millisecond * 5)
 			_ = input.SendLeftDown()
-			wasDown = true
-		} else if wasDown {
+			wasInjected = true
+		} else if wasInjected {
 			_ = input.SendLeftUp()
-			wasDown = false
+			wasInjected = false
 		}
 	}
 }
